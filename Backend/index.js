@@ -1,18 +1,27 @@
-const express = require("express");
-const app = express();
-const PORT = 8001;
-const dotenv =require("dotenv");
+import dotenv from "dotenv";
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors"
+import bookRoute from "./route/books.route.js"
+import userSingUp from "./route/user.route.js"
+const PORT =process.env.SERVER_PORT || 8000;
+const mongoDB_url =process.env.MONGODB_URL 
 dotenv.config();
-
-
-app.get("/",(req,res)=>{
-    res.send("This is home section")
-});
-
-
-
-
-
+const app = express();
+app.use(cors());
+app.use(express.json());
+//  connect to mongoDB 
+try {
+    mongoose.connect("mongodb://localhost:27017/bookStore",{
+        useUnifiedTopology: true,
+    });
+    console.log("Connected to mongoDB")
+} catch (error) {
+    console.log(error)
+}
+app.use("/book",bookRoute);
+app.post("/singup",userSingUp);
+app.post("/login",userSingUp);
 app.listen(PORT,()=>{
-    console.log(`Server is running at http://localhost:${PORT}`)
+    console.log(`Server is running at http://localhost:${PORT}`);
 });

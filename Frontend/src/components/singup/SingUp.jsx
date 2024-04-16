@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import LoginForm from '../loginForm/LoginForm';
+import axios from "axios"
+import toast from 'react-hot-toast';
 
 const SingUp = () => {
     const {
@@ -9,16 +11,37 @@ const SingUp = () => {
         handleSubmit,
         formState: { errors },
       } = useForm();
-      const onSubmit = (data) => console.log(data)
+      const onSubmit =async (data) => {
+        const userInfo = {
+            fullname: data.fullname,
+            email: data.email,
+            password: data.password,
+        }
+        await axios.post('http://localhost:8000/singup',userInfo)
+        .then( (res)=>{
+            if(res.data){
+                toast.success('Successfully created!');
+            }
+             localStorage.setItem("User",JSON.stringify(res.data.user))
+             setTimeout(() =>{
+                 window.location.replace("/");
+             },2000);
+        }).catch((error)=>{
+            if (error.response) {
+                toast.error(error.response.data.message);
+            }
+        }
+        );
+    }
 
     return (
         <div className='w-full h-[76.5vh] flex items-center justify-center'>
             <div className="modal-box dark:bg-slate-900 dark:text-slate-50">
                     <form onSubmit={handleSubmit(onSubmit)}  method="dialog" >
-                        <h2>Register</h2>
                         <Link to="/" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
                             ✕
                         </Link>
+                        <h2>Register</h2>
                         <div className="p-4 space-y-5 ">
                             <div>
                                 <span className="label-text dark:text-slate-50">Username</span>
@@ -27,7 +50,7 @@ const SingUp = () => {
                                     <input type="text"
                                      className="grow" 
                                      placeholder="Username" 
-                                     {...register("username", { required: true })}
+                                     {...register("fullname", { required: true })}
                                      />
                                 </label>
                                      {errors.username && <span className='text-red-500'>This field is required</span>}

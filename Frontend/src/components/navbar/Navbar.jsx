@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import LoginForm from '../loginForm/LoginForm';
+import { useAuth } from '../../context/AuthProvider';
+import Logout from '../logout/Logout';
 
 const Navbar = () => {
+    const [authUser, setAuthUser] =useAuth();
     const [theme,setTheme]=useState(localStorage.getItem("theme")? localStorage.getItem("theme"):"");
     const element = document.documentElement;
     useEffect(()=>{
@@ -33,9 +36,9 @@ const Navbar = () => {
     const navItam = (
         <>
           <li><NavLink to="/">Home</NavLink></li>
-          <li><NavLink to="course">Course</NavLink></li>
-          <li><NavLink to="contact">Contact</NavLink></li>
-          <li><NavLink to="about">About</NavLink></li>              
+          <li><NavLink to="/course">Course</NavLink></li>
+          <li><NavLink to="/contact">Contact</NavLink></li>
+          <li><NavLink to="/about">About</NavLink></li>              
         </>
     );
     return (
@@ -77,19 +80,21 @@ const Navbar = () => {
                             <svg onClick={()=>setTheme(theme==="light"?"dark":"light")} className="swap-on fill-current w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/></svg>
                             
                         </label>
-                        <div className="ms-5 flex gap-3 items-center">
-                            <a onClick={()=>document.getElementById('my_modal_3').showModal()}
-                             className=" py-2 px-4 rounded-lg bg-slate-900 text-white  hover:bg-white hover:text-black duration-500 cursor-pointer">
-                                Login
-                            </a>
-                            <LoginForm />
-
-                            <Link 
-                                to="/register" 
-                                    className=" py-2 px-4 rounded-lg hover:bg-black text-black bg-white whitespace-nowrap hover:bg-transparent   hover:text-white duration-500 cursor-pointer">
-                                Sing Up
-                            </Link>
-                        </div>
+                        {
+                            authUser?<Logout />:
+                                                <div className="ms-5 flex gap-3 items-center">
+                                                    <a onClick={()=>document.getElementById('my_modal_3').showModal()}
+                                                    className=" py-2 px-4 rounded-lg bg-slate-900 text-white  hover:bg-white hover:text-black duration-500 cursor-pointer">
+                                                        Login
+                                                    </a>
+                                                    <LoginForm />
+                                                    <Link 
+                                                        to="/register" 
+                                                        className=" py-2 px-4 rounded-lg hover:bg-black hover:text-white text-black bg-white whitespace-nowrap hover:bg-transparent   duration-500 cursor-pointer">
+                                                        Sing Up
+                                                    </Link>
+                                                </div> 
+                        }
                     </div>
                 </div>
             </div>
@@ -97,4 +102,4 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default Navbar ;

@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import BookCard from '../components/bookCard/BookCard';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Course = () => {
     const [booksData ,setBooksData]=useState([]);
     useEffect(()=>{
-        fetch("bookData.json")
-        .then(data=> data.json())
-        .then(data => setBooksData(data));
-    },[]);
+        const getBook =async ()=>{
+          try {
+            const res = await axios.get("http://localhost:8000/book");
+              setBooksData(res.data)
+          } catch (error) {
+            console.log(error)
+          }
+        }
+        getBook();
+      },[])
     return (
         <div className='pt-16 max-w-screen-2xl container mx-auto py-10'>
             <div className="text-center capitalize max-w-4xl mx-auto  md:space-y-8">
@@ -33,5 +40,4 @@ const Course = () => {
         </div>
     );
 };
-
 export default Course;

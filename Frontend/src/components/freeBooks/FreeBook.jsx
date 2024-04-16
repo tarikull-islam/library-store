@@ -1,5 +1,6 @@
 import React from 'react';
 import Slider from "react-slick";
+import axios from "axios"
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Heading from '../heading/Heading';
@@ -9,12 +10,16 @@ import { useState, useEffect } from 'react';
 const FreeBook = () => {
   const [booksData ,setBooksData]=useState([]);
     useEffect(()=>{
-        fetch("bookData.json")
-        .then(data=> data.json())
-        .then(data => setBooksData(data))
-        .catch((error)=> console.log(error.message))
-
-    },[]);
+      const getBook =async ()=>{
+        try {
+          const res = await axios.get("http://localhost:8000/book");
+            setBooksData(res.data)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      getBook();
+    },[])
     const filterData = booksData.filter(data => data.category === "free");
     var settings = {
         dots: true,
